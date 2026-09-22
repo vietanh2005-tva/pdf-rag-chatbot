@@ -1,42 +1,42 @@
-# Vietnamese Customer Support RAG Chatbot
+# Chatbot RAG hỗ trợ khách hàng bằng tiếng Việt
 
-A local-first Retrieval-Augmented Generation (RAG) prototype that answers Vietnamese customer-support questions from uploaded PDF policies. The application retrieves relevant passages, generates a grounded response with a local Ollama model, and shows the source document and page for human verification.
+Đây là nguyên mẫu Retrieval-Augmented Generation (RAG) ưu tiên chạy cục bộ, dùng để trả lời các câu hỏi hỗ trợ khách hàng bằng tiếng Việt dựa trên tài liệu chính sách PDF do người dùng tải lên. Ứng dụng truy xuất những đoạn nội dung liên quan, tạo câu trả lời bám sát tài liệu bằng mô hình Ollama chạy cục bộ, đồng thời hiển thị tài liệu nguồn và số trang để người dùng kiểm chứng.
 
-## Highlights
+## Tính năng nổi bật
 
-- Upload and index PDF documents from a Streamlit interface.
-- Extract text by page and split it into overlapping chunks.
-- Create multilingual embeddings with `paraphrase-multilingual-MiniLM-L12-v2`.
-- Store and retrieve vectors with persistent ChromaDB.
-- Generate Vietnamese answers locally with Ollama and Qwen 2.5.
-- Display retrieved passages, file names, page numbers, and retrieval distance.
-- Refuse unsupported answers through a grounded system prompt.
-- Include a 15-question retrieval evaluation set.
+- Tải lên và lập chỉ mục tài liệu PDF ngay trên giao diện Streamlit.
+- Trích xuất văn bản theo từng trang và chia thành các đoạn có phần nội dung chồng lấn.
+- Tạo embedding đa ngôn ngữ bằng `paraphrase-multilingual-MiniLM-L12-v2`.
+- Lưu trữ và truy xuất vector bằng ChromaDB với dữ liệu được duy trì lâu dài.
+- Tạo câu trả lời tiếng Việt cục bộ bằng Ollama và Qwen 2.5.
+- Hiển thị các đoạn được truy xuất, tên tệp, số trang và khoảng cách truy xuất.
+- Từ chối trả lời khi tài liệu không cung cấp đủ thông tin thông qua system prompt bám sát nguồn.
+- Đi kèm bộ 15 câu hỏi để đánh giá khả năng truy xuất.
 
-## Architecture
+## Kiến trúc
 
 ```text
-PDF upload
+Tải PDF lên
    |
    v
-Text extraction -> Cleaning -> Chunking -> Multilingual embeddings
-                                                |
-                                                v
-                                            ChromaDB
-                                                |
-User question -> Question embedding -> Top-k retrieval
-                                                |
-                                                v
-                                  Context + grounded prompt
-                                                |
-                                                v
-                                      Local Ollama model
-                                                |
-                                                v
-                              Answer + source pages for review
+Trích xuất văn bản -> Làm sạch -> Chia đoạn -> Embedding đa ngôn ngữ
+                                                       |
+                                                       v
+                                                   ChromaDB
+                                                       |
+Câu hỏi -> Embedding câu hỏi -> Truy xuất top-k
+                                                       |
+                                                       v
+                                      Ngữ cảnh + prompt bám sát nguồn
+                                                       |
+                                                       v
+                                          Mô hình Ollama cục bộ
+                                                       |
+                                                       v
+                                  Câu trả lời + trang nguồn để kiểm chứng
 ```
 
-## Technology
+## Công nghệ sử dụng
 
 - Python
 - Streamlit
@@ -45,36 +45,36 @@ User question -> Question embedding -> Top-k retrieval
 - Ollama / Qwen 2.5
 - pypdf
 
-## Setup
+## Cài đặt và chạy ứng dụng
 
-1. Install Python 3.10+ and [Ollama](https://ollama.com/).
-2. Create and activate a virtual environment.
-3. Install dependencies with `pip install -r requirements.txt`.
-4. Download the model with `ollama pull qwen2.5:1.5b`.
-5. Copy `.env.example` to `.env` and adjust values if needed.
-6. Start the app with `streamlit run app.py`.
-7. Upload a text-based PDF, select **Xử lý tài liệu**, and ask a question.
+1. Cài đặt Python 3.10+ và [Ollama](https://ollama.com/).
+2. Tạo và kích hoạt môi trường ảo.
+3. Cài đặt các thư viện bằng lệnh `pip install -r requirements.txt`.
+4. Tải mô hình bằng lệnh `ollama pull qwen2.5:1.5b`.
+5. Sao chép `.env.example` thành `.env` và điều chỉnh các giá trị nếu cần.
+6. Khởi động ứng dụng bằng lệnh `streamlit run app.py`.
+7. Tải lên một tệp PDF có thể trích xuất văn bản, chọn **Xử lý tài liệu**, sau đó nhập câu hỏi.
 
-## Evaluation
+## Đánh giá
 
-The repository includes `evaluation/questions.json` with 15 Vietnamese questions. Run the lightweight retrieval check against your own non-sensitive PDF:
+Repository chứa tệp `evaluation/questions.json` gồm 15 câu hỏi tiếng Việt. Chạy bài kiểm tra truy xuất đơn giản với tệp PDF không chứa dữ liệu nhạy cảm của bạn:
 
 ```bash
 python evaluate_retrieval.py --pdf path/to/policy.pdf
 ```
 
-The script reports whether expected keywords appear in the retrieved passages. The out-of-scope case is intentionally marked for manual review. This is a starter evaluation, not a complete measure of answer correctness.
+Script sẽ báo cáo liệu các từ khóa mong đợi có xuất hiện trong những đoạn văn bản được truy xuất hay không. Trường hợp câu hỏi nằm ngoài phạm vi được chủ động đánh dấu để kiểm tra thủ công. Đây chỉ là bộ đánh giá khởi đầu, chưa phải thước đo đầy đủ về độ chính xác của câu trả lời.
 
-## Privacy and repository hygiene
+## Quyền riêng tư và vệ sinh repository
 
-- Uploaded PDFs, the local vector database, `.env`, and virtual environments are excluded by `.gitignore`.
-- Do not commit internal policies, customer information, credentials, or copyrighted documents without permission.
-- Use synthetic or publicly licensed documents for a public demo.
+- Các tệp PDF được tải lên, cơ sở dữ liệu vector cục bộ, tệp `.env` và môi trường ảo đều được loại trừ trong `.gitignore`.
+- Không commit chính sách nội bộ, thông tin khách hàng, thông tin xác thực hoặc tài liệu có bản quyền khi chưa được phép.
+- Nên dùng tài liệu tổng hợp hoặc tài liệu có giấy phép công khai cho bản demo công khai.
 
-## Current scope and limitations
+## Phạm vi và hạn chế hiện tại
 
-This is a portfolio prototype, not a production customer-support system. It currently indexes one active document set at a time and does not include authentication, access control, OCR for scanned PDFs, automated safety moderation, production monitoring, or comprehensive RAG evaluation.
+Đây là nguyên mẫu phục vụ portfolio, không phải hệ thống hỗ trợ khách hàng dành cho môi trường production. Hiện tại, ứng dụng chỉ lập chỉ mục một tập tài liệu đang hoạt động tại một thời điểm và chưa hỗ trợ xác thực, phân quyền truy cập, OCR cho PDF dạng ảnh quét, kiểm duyệt an toàn tự động, giám sát production hoặc đánh giá RAG toàn diện.
 
-## Suggested portfolio demo
+## Gợi ý trình bày trong portfolio
 
-Add one screenshot or short GIF showing the uploaded document, the generated answer, and the expanded source passage. Use a synthetic/public document so the repository remains safe to share.
+Thêm một ảnh chụp màn hình hoặc GIF ngắn hiển thị tài liệu đã tải lên, câu trả lời được tạo và đoạn nguồn đã mở rộng. Hãy sử dụng tài liệu tổng hợp hoặc tài liệu công khai để repository luôn an toàn khi chia sẻ.
