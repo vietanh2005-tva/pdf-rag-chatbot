@@ -55,26 +55,12 @@ Câu hỏi -> Embedding câu hỏi -> Truy xuất top-k
 6. Khởi động ứng dụng bằng lệnh `streamlit run app.py`.
 7. Tải lên một tệp PDF có thể trích xuất văn bản, chọn **Xử lý tài liệu**, sau đó nhập câu hỏi.
 
-## Đánh giá
-
-Repository chứa tệp `evaluation/questions.json` gồm 15 câu hỏi tiếng Việt. Chạy bài kiểm tra truy xuất đơn giản với tệp PDF không chứa dữ liệu nhạy cảm của bạn:
-
-```bash
-python evaluate_retrieval.py --pdf path/to/policy.pdf
-```
-
-Script sẽ báo cáo liệu các từ khóa mong đợi có xuất hiện trong những đoạn văn bản được truy xuất hay không. Trường hợp câu hỏi nằm ngoài phạm vi được chủ động đánh dấu để kiểm tra thủ công. Đây chỉ là bộ đánh giá khởi đầu, chưa phải thước đo đầy đủ về độ chính xác của câu trả lời.
 
 ## Quyền riêng tư và vệ sinh repository
 
 - Các tệp PDF được tải lên, cơ sở dữ liệu vector cục bộ, tệp `.env` và môi trường ảo đều được loại trừ trong `.gitignore`.
 - Không commit chính sách nội bộ, thông tin khách hàng, thông tin xác thực hoặc tài liệu có bản quyền khi chưa được phép.
-- Nên dùng tài liệu tổng hợp hoặc tài liệu có giấy phép công khai cho bản demo công khai.
 
-## Phạm vi và hạn chế hiện tại
 
-Đây là nguyên mẫu phục vụ portfolio, không phải hệ thống hỗ trợ khách hàng dành cho môi trường production. Hiện tại, ứng dụng chỉ lập chỉ mục một tập tài liệu đang hoạt động tại một thời điểm và chưa hỗ trợ xác thực, phân quyền truy cập, OCR cho PDF dạng ảnh quét, kiểm duyệt an toàn tự động, giám sát production hoặc đánh giá RAG toàn diện.
 
-## Gợi ý trình bày trong portfolio
 
-Thêm một ảnh chụp màn hình hoặc GIF ngắn hiển thị tài liệu đã tải lên, câu trả lời được tạo và đoạn nguồn đã mở rộng. Hãy sử dụng tài liệu tổng hợp hoặc tài liệu công khai để repository luôn an toàn khi chia sẻ.
