@@ -1,0 +1,17 @@
+[
+  {"id": "return-window", "question": "Khách hàng có bao nhiêu ngày để trả hàng?", "expected_keywords": ["ngày", "trả"]},
+  {"id": "return-method", "question": "Tôi phải gửi sản phẩm trả lại bằng cách nào?", "expected_keywords": ["trả", "gửi"]},
+  {"id": "refund-time", "question": "Bao lâu thì tôi nhận được tiền hoàn lại?", "expected_keywords": ["hoàn", "tiền"]},
+  {"id": "refund-method", "question": "Tiền hoàn được trả bằng phương thức nào?", "expected_keywords": ["hoàn", "thanh toán"]},
+  {"id": "shipping-fee", "question": "Phí giao hàng được tính như thế nào?", "expected_keywords": ["phí", "giao"]},
+  {"id": "delivery-time", "question": "Đơn hàng mất bao lâu để giao tới?", "expected_keywords": ["giao", "ngày"]},
+  {"id": "damaged-item", "question": "Tôi phải làm gì nếu sản phẩm bị hỏng?", "expected_keywords": ["sản phẩm"]},
+  {"id": "wrong-item", "question": "Tôi nhận nhầm sản phẩm thì xử lý thế nào?", "expected_keywords": ["sản phẩm", "trả"]},
+  {"id": "exchange", "question": "Tôi có thể đổi sang kích cỡ khác không?", "expected_keywords": ["đổi"]},
+  {"id": "cancel-order", "question": "Tôi có thể hủy đơn hàng sau khi đặt không?", "expected_keywords": ["hủy", "đơn"]},
+  {"id": "payment", "question": "Website hỗ trợ những phương thức thanh toán nào?", "expected_keywords": ["thanh toán"]},
+  {"id": "invoice", "question": "Tôi có thể yêu cầu hóa đơn không?", "expected_keywords": ["hóa đơn"]},
+  {"id": "store-return", "question": "Đơn mua online có thể trả tại cửa hàng không?", "expected_keywords": ["cửa hàng", "trả"]},
+  {"id": "return-condition", "question": "Sản phẩm cần đáp ứng điều kiện gì để được trả lại?", "expected_keywords": ["trả", "sản phẩm"]},
+  {"id": "out-of-scope", "question": "Giá cổ phiếu của công ty hôm nay là bao nhiêu?", "expected_keywords": []}
+]

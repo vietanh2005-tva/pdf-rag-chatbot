@@ -1,76 +1,72 @@
-import os
+from pathlib import Path
+
 import streamlit as st
 
 from rag_pipeline import (
+    OLLAMA_MODEL_NAME,
+    TOP_K,
     build_vector_database,
+    generate_answer,
     retrieve_relevant_chunks,
-    generate_answer
 )
-
 
 st.set_page_config(
     page_title="Customer Support RAG Chatbot",
     page_icon="💬",
-    layout="wide"
+    layout="wide",
 )
-
 
 st.title("💬 Chatbot chăm sóc khách hàng từ tài liệu PDF")
-st.write(
-    "Chatbot sử dụng RAG để trả lời câu hỏi dựa trên tài liệu chính sách mua hàng, đổi trả, hoàn tiền và giao hàng."
+st.caption(
+    "RAG prototype chạy local: câu trả lời được tạo từ các đoạn tài liệu truy xuất và hiển thị nguồn để kiểm tra."
 )
 
+data_folder = Path("data")
+data_folder.mkdir(exist_ok=True)
 
-DATA_FOLDER = "data"
+with st.sidebar:
+    st.header("📄 Tài liệu PDF")
+    st.caption(f"Local LLM: {OLLAMA_MODEL_NAME} · Top-k: {TOP_K}")
+    uploaded_file = st.file_uploader("Upload file PDF", type=["pdf"])
 
-if not os.path.exists(DATA_FOLDER):
-    os.makedirs(DATA_FOLDER)
+    if uploaded_file is not None:
+        safe_name = Path(uploaded_file.name).name
+        pdf_path = data_folder / safe_name
+        pdf_path.write_bytes(uploaded_file.getbuffer())
+        st.success(f"Đã upload: {safe_name}")
 
-
-st.sidebar.header("📄 Tài liệu PDF")
-
-uploaded_file = st.sidebar.file_uploader(
-    "Upload file PDF",
-    type=["pdf"]
-)
-
-
-if uploaded_file is not None:
-    pdf_path = os.path.join(DATA_FOLDER, uploaded_file.name)
-
-    with open(pdf_path, "wb") as f:
-        f.write(uploaded_file.getbuffer())
-
-    st.sidebar.success(f"Đã upload: {uploaded_file.name}")
-
-    if st.sidebar.button("Xử lý tài liệu"):
-        with st.spinner("Đang đọc PDF, chia chunk, tạo embedding và lưu vào ChromaDB..."):
-            total_chunks = build_vector_database(pdf_path)
-
-        st.sidebar.success(f"Đã xử lý xong. Tổng số chunk: {total_chunks}")
-
+        if st.button("Xử lý tài liệu", type="primary"):
+            try:
+                with st.spinner("Đang đọc PDF, chia chunk và tạo embedding..."):
+                    total_chunks = build_vector_database(pdf_path)
+                st.success(f"Đã index {total_chunks} chunks.")
+            except Exception as exc:
+                st.error(f"Không thể xử lý tài liệu: {exc}")
 
 st.divider()
-
-question = st.text_input("Nhập câu hỏi của khách hàng:")
+question = st.text_input(
+    "Nhập câu hỏi của khách hàng",
+    placeholder="Ví dụ: Tôi có bao nhiêu ngày để trả hàng?",
+)
 
 if st.button("Hỏi chatbot"):
     if not question.strip():
         st.warning("Vui lòng nhập câu hỏi.")
     else:
-        with st.spinner("Đang tìm đoạn tài liệu liên quan..."):
-            chunks = retrieve_relevant_chunks(question, top_k=3)
+        with st.spinner("Đang tìm các đoạn tài liệu liên quan..."):
+            chunks = retrieve_relevant_chunks(question)
 
-        if len(chunks) == 0:
-            st.error("Chưa có dữ liệu trong ChromaDB. Hãy upload và xử lý PDF trước.")
+        if not chunks:
+            st.error("Chưa có dữ liệu. Hãy upload và xử lý một PDF trước.")
         else:
-            with st.spinner("Đang sinh câu trả lời bằng Local LLM..."):
+            with st.spinner("Đang tạo câu trả lời bằng Local LLM..."):
                 answer = generate_answer(question, chunks)
 
-            st.subheader("✅ Câu trả lời")
+            st.subheader("Câu trả lời")
             st.write(answer)
-
-            st.subheader("📌 Nguồn tham khảo")
-            for i, chunk in enumerate(chunks):
-                with st.expander(f"Nguồn {i + 1}: {chunk['source']} - Trang {chunk['page']}"):
+            st.subheader("Nguồn tham khảo")
+            for index, chunk in enumerate(chunks, start=1):
+                label = f"Nguồn {index}: {chunk['source']} - Trang {chunk['page']}"
+                with st.expander(label):
                     st.write(chunk["text"])
+                    st.caption(f"Retrieval distance: {chunk['distance']:.4f}")
